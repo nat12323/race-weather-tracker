@@ -16,9 +16,22 @@ CREATE TABLE upcoming_races (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE user(
-    user_id SERIAL PRIMARY KEY,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
+
+-- Alter table to optimize for PostGIS Capabilities
+ALTER TABLE upcoming_races 
+ADD COLUMN geom GEOMETRY(Point, 4326);
+
+UPDATE upcoming_races 
+SET geom = ST_SetSRID(ST_MakePoint(longitude, latitude), 4326);
+
+CREATE INDEX idx_races_geom ON upcoming_races USING GIST(geom);
+
+
+-- User table for user authentication
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(100) UNIQUE NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

@@ -1,0 +1,14 @@
+const express = require('express');
+const {
+    generateToken,
+    register,
+    login
+} = require('../controllers/authController');
+
+const router = express.Router();
+
+//Public routes
+router.post('/register', register);
+router.post('/login', login)
+
+module.exports = router;
